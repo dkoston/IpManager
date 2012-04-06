@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+<title>IP Manager - Change a Site's IP Address</title>
+<link rel="shortcut icon" href="[% favicon_mrlink %]" type="image/x-icon" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--[if gt IE 6]>
+<link rel="stylesheet" href="[% ie7_css_mrlink %]" />
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" href="[% ie6_css_mrlink %]" />
+<![endif]-->
+<link rel='stylesheet' type='text/css' href='[% combopt_css_mrlink %]' /><link rel='stylesheet' type='text/css' href='[% styleopt_css_mrlink %]' />
+<!--[if IE]>
+<style type="text/css">
+h3{font-size:11px;}
+</style>
+<![endif]-->
+<script type='text/javascript' src='[% utilcontainer_js_mrlink %]'></script><script type='text/javascript' src='[% cpallmin_js_mrlink %]'></script><script type="text/javascript">
+//<![CDATA[
+// Security token for xml-api calls
+CPANEL.security_token = "[% security_token %]";
+//]]>
+</script>
+</head>
+
+<body class="yui-skin-sam">
+<div id="pageheader">
+        <div id="breadcrumbs">
+                <p>&nbsp;<a href="[% security_token %]/scripts/command?PFILE=main">Main</a>&nbsp;&gt;&gt;&nbsp;Plugins</a>&nbsp;&gt;&gt;&nbsp;<a href="[% security_token %]/cgi/addon_ipmanager.cgi" class="active">IP Manager</a></p>
+        </div>
+        <div id="doctitle">
+                <h1><span><img src="[% chngsiteip_jpeg_mrlink %]" alt="" /></span> Change Site's IP Address</h1>
+
+        </div>
+</div>
+
+<div class="topboxmargin"></div><link rel="stylesheet" type="text/css" href="[% autocomplete_css_mrlink %]" />
+<h3 class='simpleheading'>Changing IP for [% user %] ([% domain %])</h3>
+
+<span class="b2">Current Address:</span> <i>[% oldip %]</i>
+
+<br /><span class="b2">Current Sub/Parked Domains:</span>
+<ul>
+	[% FOREACH domain IN subdomains %]
+		<li>[% domain.domain %]
+	[% END %]
+	[% FOREACH domain IN parked_domains %]
+		<li>[% domain.domain %]
+	[% END %]
+</ul>
+<table border='0' width='100%'>
+
+</table>
+
+<form action="" method="POST">
+	  <input type='hidden' name='action' value='changeip' />
+      <input type="hidden" name="user" value="[% user %]" />
+      <input type="hidden" name="oldip" value="[% oldip %]" />
+	  <input type="hidden" name="hostname" value="[% domain %]" />
+      <span class="b2">New Address (only available IP addresses are shown):</span>
+	  <br />
+      <select name="customip">
+		[% FOREACH ip IN available_ips %]
+			<option value=[% ip %]>[% ip %]</option>
+		[% END %]
+		[% FOREACH ip IN shared_ips %]
+			<option value='[% ip %]'>[% ip %] (Shared IP Address)</option>
+		[% END %]
+</select>
+
+<br /><input type="submit" class="input-button" value="Change"> <input type="button" class="input-button" onclick='history.go(-1)' value="Go Back"></form>
+<br /><span class="b2">Warning:</span> Changing a site's IP address may cause it to appear down from some locations until the DNS has propagated to all nameservers on the Internet.
+</body>
+</html>

@@ -1,0 +1,104 @@
+#!/usr/bin/perl
+
+# Sanatize @INC
+BEGIN {
+    unshift @INC, '/usr/local/cpanel';
+    @INC = grep( !/(^\.|\.\.|\/\.+)/, @INC );
+    @INC = grep( /^(\/usr\/lib\d*\/perl|\/usr\/local\/lib\d*\/perl|\/usr\/local\/cpanel)/, @INC );
+}
+
+use Storable ();
+use LWP::UserAgent ();
+use XML::Simple		();
+
+# Parse the arguments passed to the testadmin scripts via stdin
+my $theargs = <STDIN>;
+
+unless ( $theargs =~ /^(\d+) ([A-Z]+) (\S+)/ ) {
+    print STDERR "$0 : Syntax Mismatch\n";
+    exit 1;
+}
+chomp($theargs);
+
+my ( $uid, $action, @args ) = split( / /, $theargs );
+
+
+# This command hash contains all the logic for the actions to be run as root
+# to add a new escalated action, add a new key with a value of a coderef to this hash
+my %commands = (
+	'CHANGEIP' => sub {
+		
+	    # pull in the values that were in @args
+	    my ($theUser, $newip, $security_token) = @_;
+        
+		# Make sure nothing malicious is in the values
+		if($theUser !~ /^[a-zA-Z0-9]{4,8}/){
+			print STDERR "Not a standard cPanel username. Exiting";
+			exit();
+		}
+		if($newip !~ /^([\d]+)\.([\d]+)\.([\d]+)\.([\d]+)$/){
+			print STDERR "Not a standard IP address. Exiting";
+			exit();
+		}
+		if($security_token !~ /^\/cpsess[0-9]+/){	#Ironic that the security token creates a level of insecurity here
+			print STDERR "Not a standard cPanel security token. Exiting";
+			exit();
+		}
+
+		#Load access hash - We created it upon install if it did not exist
+		my $accesshash;
+	    open( my $hash_fh, "<", "/root/.accesshash" ) || print STDERR ("could not open file handle: $@");
+	    $accesshash = do { local $/; <$hash_fh>; };
+	    close($hash_fh);
+
+	    $accesshash =~ s/\n//g;
+	    my $auth = "WHM root:$accesshash";
+
+		#run query
+	    my $ua = LWP::UserAgent->new();
+		$ua->ssl_opts( 'verify_hostname' => 0);
+	    my $res = $ua->get( "https://127.0.0.1:2087/$security_token/xml-api/setsiteip?user=$theUser&ip=$newip", Authorization => $auth );
+
+		#validate query
+	    if ( $res->is_success ) {
+	        my $xml_out = XML::Simple::XMLin($res->content());
+			if ($xml_out->{status} == 1){
+				print 1;
+			}else{
+				print 0;
+			}
+	    }
+	    else {
+	        print STDERR "Query Failed:  " . $res->status_line() . "\n";
+	        if ( $res->content ) {
+	            print STDERR "error page contents:\n\n" . $res->content() . "\n";
+	        }
+	        print 0;
+	    }
+	},
+);
+
+# Verify that the command exists
+if ( !exists $commands{$action} ) {
+    print STDERR "not a valid action\n";
+    exit 1;
+}
+
+# Code used to ensure that the correct user is being run.
+my ( $user, $gid, $home ) = ( getpwuid( int($uid) ) )[ 0, 3, 7 ];
+
+if ( $user eq 'root' || $user eq '' ) {
+    print STDERR "Admin Binary called with invalid user\n";
+    exit;
+}
+
+if ( !-e "/var/cpanel/users/$user" && $user ne 'cpanel' ) {
+    print STDERR "Admin binary called with invalid user\n";
+    exit;
+}
+
+# This is needed by the Cpanel::AdminBin module
+print ".\n";
+
+# Execute the action in question
+$commands{$action}->(  @args );
