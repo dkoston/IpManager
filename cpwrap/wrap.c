@@ -376,7 +376,7 @@ int main(int argc, char **argv)
 	// see README for more details
     /* wrapper_name     target_name                   user group safeparent exec_full */
     struct executable_properties exec_list [1] = {
-        { "ipmanagerwrap",      "/usr/local/cpanel/bin/ipmanageradmin",      "root", "wheel", 1, 0 }
+        { "ipmanagerwrap",      "/usr/local/cpanel/bin/ipmanageradmin",      "root", "wheel", 0, 0 }
     };
 
     struct executable_properties *my_exec = NULL;

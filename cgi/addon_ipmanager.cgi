@@ -4,7 +4,7 @@
 #
 # This code is subject to the GNU GPL: http://www.gnu.org/licenses/gpl.html
 #
-# version 0.8
+# Version: 1.0
 
 BEGIN { unshift @INC, '/usr/local/cpanel'; }
 

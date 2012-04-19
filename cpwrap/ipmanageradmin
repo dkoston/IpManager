@@ -7,7 +7,6 @@ BEGIN {
     @INC = grep( /^(\/usr\/lib\d*\/perl|\/usr\/local\/lib\d*\/perl|\/usr\/local\/cpanel)/, @INC );
 }
 
-use Storable ();
 use LWP::UserAgent ();
 use XML::Simple		();
 
@@ -40,7 +39,7 @@ my %commands = (
 			print STDERR "Not a standard IP address. Exiting";
 			exit();
 		}
-		if($security_token !~ /^\/cpsess[0-9]+/){	#Ironic that the security token creates a level of insecurity here
+		if($security_token !~ /^\/cpsess[0-9]+/ && $security_token != ''){	#Ironic that the security token creates a level of insecurity here
 			print STDERR "Not a standard cPanel security token. Exiting";
 			exit();
 		}
