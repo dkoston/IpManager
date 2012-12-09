@@ -22,6 +22,11 @@ h3{font-size:11px;}
 CPANEL.security_token = "[% security_token %]";
 //]]>
 </script>
+<style type='text/css'>
+#ipchanged{
+	margin-left:20px;
+}
+</style>
 </head>
 
 <body class="yui-skin-sam">
@@ -36,17 +41,17 @@ CPANEL.security_token = "[% security_token %]";
 </div>
 
 <div class="topboxmargin"></div><link rel="stylesheet" type="text/css" href="[% autocomplete_css_mrlink %]" />
-<h3>Changing ip for [% domain %] ([% user %]) from [% oldip %] to [% customip %]</h3>
-
-[% IF !statusmsg %]
-	<span class="b2">Account modified. New ip is: [% customip %].</span>
-[% ELSE %]
-	<span class="b2" style='color:red;'>ERROR. Ip not changed. Error Message: [% statusmsg %]</span>
-[% END %]
+<div id="ipchanged">
+	<h3>Changing ip for [% domain %] ([% user %]) from [% oldip %] to [% customip %]</h3>
+	[% IF !statusmsg %]
+		<span class="b2">Account modified. New ip is: [% customip %].</span>
+	[% ELSE %]
+		<span class="b2" style='color:red;'>ERROR. Ip not changed. Error Message: [% statusmsg %]</span>
+	[% END %]
 	<br /><br />
 	<form action='[% security_token %]/cgi/addon_ipmanager.cgi'>
 		<input type="submit" class="input-button" onclick='' value="Back to IP Manager">
 	</form>
-
+</div>
 </body>
 </html>

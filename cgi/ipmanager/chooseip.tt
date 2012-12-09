@@ -22,6 +22,21 @@ h3{font-size:11px;}
 CPANEL.security_token = "[% security_token %]";
 //]]>
 </script>
+<style type='text/css'>
+.grey{
+	background-color:#666666;
+}
+.ourred{
+	background-color:#ff3333;
+}
+#chooseip{
+	margin-left:20px;
+}
+fieldset li{
+	margin-left:-40px;
+	list-style-type:none;
+}
+</style>
 </head>
 
 <body class="yui-skin-sam">
@@ -36,40 +51,103 @@ CPANEL.security_token = "[% security_token %]";
 </div>
 
 <div class="topboxmargin"></div><link rel="stylesheet" type="text/css" href="[% autocomplete_css_mrlink %]" />
-<h3 class='simpleheading'>Changing IP for [% user %] ([% domain %])</h3>
+<div id="chooseip">
+	<form action="" method="POST">
+		<input type='hidden' name='action' value='changeip' />
+		<input type="hidden" name="user" value="[% user %]" />
+		<input type="hidden" name="hostname" value="[% domain %]" />
+	<div id="domain_ip_information" class="form_action">
+		<fieldset>
+			<h3>[% domain %]</h3>
+			<table style="width: 100%">
+				<tr>
+					<td class="align_right" style="width: 120px"><label for="domain">Current IP Address:</label></td>
+                    <td style="width: 200px"><input type="text" name="oldip" value="[% oldip %]" readonly /></td>
+                    <td><div id="domain_error"></div></td>
+                </tr>
+                <tr>
+                    <td class="align_right"><label for="username">New IP Address:</label></td>
 
-<span class="b2">Current Address:</span> <i>[% oldip %]</i>
+                    <td>
+						<select name="customip">
+						[% FOREACH ip IN available_ips %]
+							[% IF (matches = ip.match('(.+)(-GREY)$')) %]
+								<option class='grey' value=[% matches.0 %]>[% matches.0 %]</option>
+							[% ELSIF (matches = ip.match('(.+)(-RED)$')) %]
+								<option class='red' value=[% matches.0 %]>[% matches.0 %]</option>
+							[% ELSE %]
+								<option value=[% ip %]>[% ip %]</option>
+							[% END %]
+						[% END %]
+						[% FOREACH ip IN shared_ips %]
+							<option value='[% ip %]'>[% ip %] (Shared IP Address)</option>
+						[% END %]
+						</select>
+					</td>
+                    <td><div id="username_error"></div></td>
+                </tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td colspan="2">IPs shown in <span class='grey'>grey</span> already have a domain on them.</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td colspan="2">IPs shown in <span class='ourred'>red</span> already have 2 or more domains on them.</td>
+				</tr>
+            </table>
+        </fieldset>
 
-<br /><span class="b2">Current Sub/Parked Domains:</span>
-<ul>
-	[% FOREACH domain IN subdomains %]
-		<li>[% domain.domain %]
-	[% END %]
-	[% FOREACH domain IN parked_domains %]
-		<li>[% domain.domain %]
-	[% END %]
-</ul>
-<table border='0' width='100%'>
+    </div><!-- end domain_ip_information -->
+		<input type="button" class="input-button" onclick='history.go(-1)' value="Go Back" /> <input type="submit" id="submit" value="Change" />
+	</form>
+	<br /><br /><br />
+	
+	<div id="domain_information" class="form_action">
+		<fieldset>
+			<h3>Domains affected by the IP change</h3>
+			<table style="width: 100%">
+				<tr>
+					<td class="align_right" style="width: 120px"><label for="domain">Main Domain:</label></td>
+                    <td style="width: 200px">[% domain %]</td>
+                    <td><div id="domain_error"></div></td>
+                </tr>
+                <tr>
+					<td class="align_right" style="width: 120px"><label for="sub">Sub Domains:</label></td>
+                    <td style="width: 200px">
+						[% COUNT = 0 %]
+						<ul>
+						[% FOREACH subdomain IN subdomains %]
+								[% COUNT = COUNT + 1 %]
+							<li>[% subdomain.domain %]</li>
+						[% END %]
+						</ul>
+						[% IF COUNT == '0' %]
+						<p>none</p>
+						[% END %]
+					</td>
+                    <td><div id="sub_error"></div></td>
+                </tr>
+				<tr>
+					<td class="align_right" style="width: 120px"><label for="parked">Parked Domains:</label></td>
+                    <td style="width: 200px">
+						[% COUNT = 0 %]
+						<ul>
+						[% FOREACH parkeddomain IN parked_domains %]
+							[% COUNT = COUNT + 1 %]
+							<li>[% parkeddomain.domain %]</li>
+						[% END %]
+						</ul>
+						[% IF COUNT == '0' %]
+						<p>none</p>
+						[% END %]
+					</td>
+                    <td><div id="parked_error"></div></td>
+                </tr>
+            </table>
+        </fieldset>
 
-</table>
+    </div><!-- end domain_information -->
 
-<form action="" method="POST">
-	  <input type='hidden' name='action' value='changeip' />
-      <input type="hidden" name="user" value="[% user %]" />
-      <input type="hidden" name="oldip" value="[% oldip %]" />
-	  <input type="hidden" name="hostname" value="[% domain %]" />
-      <span class="b2">New Address (only available IP addresses are shown):</span>
-	  <br />
-      <select name="customip">
-		[% FOREACH ip IN available_ips %]
-			<option value=[% ip %]>[% ip %]</option>
-		[% END %]
-		[% FOREACH ip IN shared_ips %]
-			<option value='[% ip %]'>[% ip %] (Shared IP Address)</option>
-		[% END %]
-</select>
-
-<br /><input type="submit" class="input-button" value="Change"> <input type="button" class="input-button" onclick='history.go(-1)' value="Go Back"></form>
-<br /><span class="b2">Warning:</span> Changing a site's IP address may cause it to appear down from some locations until the DNS has propagated to all nameservers on the Internet.
+</div>
 </body>
 </html>

@@ -163,8 +163,7 @@ CPANEL.util.prevent_submit('searchinput2');
 
     </form>
 
-<script type='text/javascript' src='[% datasource_js_mrlink %]'></script>
-<script type='text/javascript' src='[% autocomplete_js_mrlink %]'></script>
+<script type='text/javascript' src='[% pkghover_js_mrlink %]'></script><script type='text/javascript' src='[% datasource_js_mrlink %]'></script><script type='text/javascript' src='[% autocomplete_js_mrlink %]'></script>
 <script type="text/javascript">
 //<![CDATA[
 function setHostname(){
@@ -207,14 +206,17 @@ function updateUserInfo(o) {
     }
     if (acct) {
         var acctinfo = document.getElementById('acctinfo');
-        var owner = acct.getElementsByTagName('owner')[0].firstChild.nodeValue;
-        var email = acct.getElementsByTagName('email')[0].firstChild.nodeValue;
-        var startdate = acct.getElementsByTagName('startdate')[0].firstChild.nodeValue;
-        var cpmod = acct.getElementsByTagName('theme')[0].firstChild.nodeValue;
-        var ip = acct.getElementsByTagName('ip')[0].firstChild.nodeValue;
-        var ppkg = acct.getElementsByTagName('plan')[0].firstChild.nodeValue;
-        var diskused = acct.getElementsByTagName('diskused')[0].firstChild.nodeValue;
-        var disklimit = acct.getElementsByTagName('disklimit')[0].firstChild.nodeValue;
+		var owner = acct.getElementsByTagName('owner')[0].firstChild.nodeValue;
+        var email = '';
+		if( acct.getElementsByTagName('email')[0].firstChild != null){ 			
+			email = acct.getElementsByTagName('email')[0].firstChild.nodeValue;
+		}
+        var startdate = acct.getElementsByTagName('startdate')[0].firstChild.nodeValue || '';
+        var cpmod = acct.getElementsByTagName('theme')[0].firstChild.nodeValue || '';
+        var ip = acct.getElementsByTagName('ip')[0].firstChild.nodeValue || '';
+        var ppkg = acct.getElementsByTagName('plan')[0].firstChild.nodeValue || '';
+        var diskused = acct.getElementsByTagName('diskused')[0].firstChild.nodeValue || '';
+        var disklimit = acct.getElementsByTagName('disklimit')[0].firstChild.nodeValue || '';
     
         var newhtml ="<table style='margin: 0 auto;' class='htable' cellpadding='0' cellspacing='1'>" +
             "<tbody>"+
