@@ -372,7 +372,7 @@ sub changeIPInFiles {
     my $eh = IO::Handle->new();
 
     #Replace IP in DNS Zone
-    my $pid = IPC::Open3::open3( $wh, $rh, $eh, "sed -i 's/$oldip/$newip/g' /var/named/$domain.db" );
+    my $pid = IPC::Open3::open3( $wh, $rh, $eh, "sed -i 's/$oldip/$newip/g' /var/named/$domain.db && /scripts/dnscluster synczone $domain" );
     waitpid( 0, $pid );
 }
 
