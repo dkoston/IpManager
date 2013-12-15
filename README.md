@@ -11,7 +11,7 @@ Installation
 ------------
 1. SSH to your cPanel/WHM server and gain root access
 2. Run the following command:
-    wget -N https://github.com/kostonconsulting/IpManager/raw/master/installer/IP-Manager-1.4.sea;chmod +x IP-Manager-1.4.sea;./IP-Manager-1.4.sea 
+        wget -N https://github.com/kostonconsulting/IpManager/raw/master/installer/IP-Manager-1.4.sea;chmod +x IP-Manager-1.4.sea;./IP-Manager-1.4.sea 
 
 Business Uses
 -------------
