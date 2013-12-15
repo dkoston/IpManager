@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/local/cpanel/3rdparty/bin/perl
 #WHMADDON:ipmanager:IP Manager
 # IP Manager - Dave Koston - Koston Consulting - All Rights Reserved
 #
