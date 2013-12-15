@@ -1,9 +1,0 @@
-#!/bin/bash
-
-rm -rf /usr/local/cpanel/whostmgr/docroot/cgi/ipmanager/
-rm -f /usr/local/cpanel/whostmgr/docroot/cgi/addon_ipmanager.cgi
-rm -f /usr/local/cpanel/Cpanel/Ipmanager.pm
-rm -f /usr/local/cpanel/bin/ipmanageradmin
-rm -f /usr/local/cpanel/bin/ipmanagerwrap
-echo "IP Manager Plugin Uninstalled."
-
