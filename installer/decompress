@@ -1,0 +1,143 @@
+#!/bin/bash
+# IP Manager - Dave Koston - Koston Consulting - All Rights Reserved
+#
+# This code is subject to the GNU GPL: http://www.gnu.org/licenses/gpl.html
+#
+
+APPCONFIGVERSION=0
+
+#Check to see if this is a bundled cPanel, look for AppConfig version
+get_appconfig_version(){
+	#Get Current cPanel Version
+	CPMJVERSION=$(awk 'BEGIN{FS = "."}{print $1}' /usr/local/cpanel/version)
+	CPMNVERSION=$(awk 'BEGIN{FS = "."}{print $2}' /usr/local/cpanel/version)
+	CP3VERSION=$(awk 'BEGIN{FS = "."}{print $3}' /usr/local/cpanel/version)
+	CP4VERSION=$(awk 'BEGIN{FS = "."}{print $4}' /usr/local/cpanel/version)
+
+	if (( "$CPMJVERSION" == "11" )); then
+		if (( "$CPMNVERSION" == "38" )); then
+			if (( "$CP3VERSION" >= "1" )); then
+				#11.38.1+
+				APPCONFIGVERSION=2
+			else
+				APPCONFIGVERSION=1
+			fi
+		elif (("$CPMNVERSION" > "38" )); then
+			#Post 11.38
+			APPCONFIGVERSION=2
+		else
+			#Pre 11.38
+			APPCONFIGVERSION=1
+		fi
+	elif (( "$CPMJVERSION" > "11" )); then
+		#12.x+
+		APPCONFIGVERSION=2
+	fi
+}
+
+
+get_appconfig_version
+
+echo ""
+echo "Installing IPManager"
+echo ""
+echo ""
+echo ""
+echo ""
+echo "############################################################"
+echo "# Installing Required Perl Modules. This may take a minute.#"
+echo "# If any module installs fail, you will need to manually   #"
+echo "# install the module using CPAN or /scripts/perinstaller.  #"
+echo "############################################################"
+echo ""
+echo ""
+
+sleep 5 
+
+
+modules=( "CGI" "Fcntl" "IO::Handle" "IPC::Open3" "JSON" "MIME::Base64" "Template")
+
+for i in "${modules[@]}"
+do
+	result=`perldoc -l $i`
+	if [[ "$result" =~ "\/usr\/local\/lib\/perl5" ]]; then
+    	echo "$i is installed"
+	else
+		echo "installing $i"
+		/scripts/perlinstaller $i 2>&1
+	fi
+done
+
+
+echo ""
+echo ""
+echo "############################################################"
+echo "#                Installing Plugin Files                   #"
+echo "############################################################"
+echo ""
+echo ""
+
+export TMPDIR=`mktemp -d /tmp/ipmanagerinstall.XXXXXX`
+ARCHIVE=`awk '/^__ARCHIVE_BELOW__/ {print NR + 1; exit 0; }' $0`
+
+tail -n+$ARCHIVE $0 | tar xzv -C $TMPDIR
+
+CDIR=`pwd`
+cd $TMPDIR
+
+cp -Rf ./cgi/* /usr/local/cpanel/whostmgr/docroot/cgi/
+cp -f ./uninstall-ipmanager /scripts/uninstall-ipmanager
+
+cd $CDIR 
+rm -rf $TMPDIR
+
+if [ ! -f /root/.accesshash ]; then
+	/usr/local/cpanel/whostmgr/bin/whostmgr setrhash >/dev/null
+fi
+
+if (( "$APPCONFIGVERSION" >= "1" )); then
+	echo ""
+	echo ""
+	echo "############################################################"
+	echo "#         Enabling Application via AppConfig               #"
+	echo "############################################################"
+	echo ""
+	echo ""
+	
+	if (( "$APPCONFIGVERSION" == "1" )); then
+		if [ ! -d /var/cpanel/apps ]; then
+			mkdir /var/cpanel/apps
+		fi
+		echo "..."
+		#Manual use of appconfig
+		cp -f ./usr/local/cpanel/whostmgr/docroot/cgi/ipmanager/appconfig/ipmanager-acv1.conf /var/cpanel/apps/
+		
+	elif (( "$APPCONFIGVERSION" == "2" )); then
+		#Remove old v1 appconfig file
+		if [ -f /var/cpanel/apps/ipmanager-acv1.conf ]; then
+			rm -f /var/cpanel/apps/ipmanager-acv1.conf
+		fi
+		
+		#Use appconfig system to register app if not already installed
+		APPCONFIG=$(/usr/local/cpanel/bin/show_appconfig)
+		if [[ $APPCONFIG =~ ipmanager\-acv2 ]]; then
+			echo "..."
+		else
+			echo "..."
+			/usr/local/cpanel/bin/register_appconfig /usr/local/cpanel/whostmgr/docroot/cgi/ipmanager/appconfig/ipmanager-acv2.conf
+		fi
+	fi
+	echo "...done"
+fi
+
+echo ""
+echo ""
+echo "################### INSTALL COMPLETE #####################"
+echo "Resellers can now edit account IPs using WHM's"
+echo "IP Manager link in the Plugins area."
+echo "If you wish to uninstall this plugin at any time, run:"
+echo "/scripts/uninstall-ipmanager"
+
+exit 0
+
+__ARCHIVE_BELOW__

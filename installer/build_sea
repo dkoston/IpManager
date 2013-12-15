@@ -1,0 +1,53 @@
+#!/bin/bash
+
+echo "What Version Number?";
+read VERSION;
+
+CURVER=$(grep 'Version:' ../code/cgi/addon_ipmanager.cgi);
+echo "Current version is: ";
+echo $CURVER;
+echo "";
+echo "Did you update addon_ipmanager with the new version number?";
+read ANSWER;
+
+GOODBYE=1
+if [ "$ANSWER" == "yes" ]; then
+  GOODBYE=0;
+fi
+
+if [ "$ANSWER" == "y" ]; then
+  GOODBYE=0;
+fi
+
+if [ "$GOODBYE" == "1" ]; then
+	exit 0;
+fi
+
+echo "Building IP-Manager-${VERSION}.sea";
+
+
+export COPYFILE_DISABLE=true;
+cd ../code;
+tar cf ../installer/payload.tar --exclude='Icon\?' --exclude='\.DS\_Store' --exclude='\.dropbox' --exclude='\.svn' *;
+cd ../installer/;
+
+
+if [ -e "payload.tar" ]; then
+    gzip payload.tar;
+
+    if [ -e "payload.tar.gz" ]; then
+        cat decompress payload.tar.gz > IP-Manager-${VERSION}.sea;
+		rm payload.tar.gz;
+		chmod +x IP-Manager-${VERSION}.sea;
+		
+    else
+        echo "payload.tar.gz does not exist";
+        exit 1;
+    fi
+else
+    echo "payload.tar does not exist";
+    exit 1;
+fi
+
+echo "IP-Manager-${VERSION}.sea created";
+exit 0;

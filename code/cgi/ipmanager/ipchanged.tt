@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+<head>
+<title>IP Manager - Change a Site's IP Address</title>
+<link rel="shortcut icon" href="[% favicon_mrlink %]" type="image/x-icon" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--[if gt IE 6]>
+<link rel="stylesheet" href="[% ie7_css_mrlink %]" />
+<![endif]-->
+<!--[if lt IE 7]>
+<link rel="stylesheet" href="[% ie6_css_mrlink %]" />
+<![endif]-->
+<link rel='stylesheet' type='text/css' href='[% combopt_css_mrlink %]' /><link rel='stylesheet' type='text/css' href='[% styleopt_css_mrlink %]' />
+<!--[if IE]>
+<style type="text/css">
+h3{font-size:11px;}
+</style>
+<![endif]-->
+<script type='text/javascript' src='[% utilcontainer_js_mrlink %]'></script><script type='text/javascript' src='[% cpallmin_js_mrlink %]'></script><script type="text/javascript">
+//<![CDATA[
+// Security token for xml-api calls
+CPANEL.security_token = "[% security_token %]";
+//]]>
+</script>
+<style type='text/css'>
+#ipchanged{
+	margin-left:20px;
+}
+</style>
+</head>
+
+<body class="yui-skin-sam">
+<div id="pageheader">
+        <div id="breadcrumbs">
+                <p>&nbsp;<a href="[% security_token %]/scripts/command?PFILE=main">Main</a>&nbsp;&gt;&gt;&nbsp;Plugins</a>&nbsp;&gt;&gt;&nbsp;<a href="[% security_token %]/cgi/addon_ipmanager.cgi" class="active">IP Manager</a></p>
+        </div>
+        <div id="doctitle">
+                <h1><span><img src="[% chngsiteip_jpeg_mrlink %]" alt="" /></span> Change Site's IP Address</h1>
+
+        </div>
+</div>
+
+<div class="topboxmargin"></div><link rel="stylesheet" type="text/css" href="[% autocomplete_css_mrlink %]" />
+<div id="ipchanged">
+	<h3>Changing ip for [% domain %] ([% user %]) from [% oldip %] to [% IF aliasip %][% aliasip %][% ELSE %][% customip %][% END %]</h3>
+	[% IF !statusmsg %]
+		<span class="b2">Account modified. New ip is: [% IF aliasip %][% aliasip %][% ELSE %][% customip %][% END %].</span>
+	[% ELSE %]
+		<span class="b2" style='color:red;'>ERROR. Ip not changed. Error Message: [% statusmsg %]</span>
+	[% END %]
+	<br /><br />
+	<form action='[% security_token %]/cgi/addon_ipmanager.cgi'>
+		<input type="submit" class="input-button" onclick='' value="Back to IP Manager">
+	</form>
+</div>
+</body>
+</html>
