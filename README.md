@@ -13,6 +13,10 @@ Installation
 2. Run the following command:
         wget -N https://github.com/kostonconsulting/IpManager/raw/master/installer/IP-Manager-1.4.sea;chmod +x IP-Manager-1.4.sea;./IP-Manager-1.4.sea 
 
+3. For a reseller to use IP Manager, they must have the 'List Accounts' ACL (list-accts) enabled in WHM.
+
+
+
 Business Uses
 -------------
 DDoS risk mitigation: 

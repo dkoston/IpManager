@@ -1,3 +1,7 @@
+1.5:
+	Improvement: Fix AppConfig ACL for AppConfig v2
+	Improvement: Update install doc instructions
+	
 1.4:
 	Improvement: Use CpUserGuard rather than SaveCpUserFile
 	Improvement: Update error reporting to use Cpanel::Logger
