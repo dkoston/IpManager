@@ -3,7 +3,7 @@
 # IP Manager - Dave Koston - Koston Consulting - All Rights Reserved
 #
 # This code is subject to the GNU GPL: http://www.gnu.org/licenses/gpl.html
-# Version: 1.5
+# Version: 1.6
 
 BEGIN { unshift @INC, '/usr/local/cpanel'; }
 use strict;
@@ -42,18 +42,18 @@ my $vars = {
     shared_ips              => undef,
     custom_ip               => undef,
     security_token          => $ENV{cp_security_token},
-    favicon_mrlink          => Cpanel::MagicRevision::calculate_magic_url('../favicon.ico'),
-    ie7_css_mrlink          => Cpanel::MagicRevision::calculate_magic_url('../themes/x/css/ie7.css'),
-    ie6_css_mrlink          => Cpanel::MagicRevision::calculate_magic_url('../themes/x/css/ie6.css'),
-    combopt_css_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../combined_optimized.css'),
-    styleopt_css_mrlink     => Cpanel::MagicRevision::calculate_magic_url('../themes/x/style_optimized.css'),
-    utilcontainer_js_mrlink => Cpanel::MagicRevision::calculate_magic_url('../../yui-gen/utilities_container/utilities_container.js'),
-    cpallmin_js_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../../cjt/cpanel-all-min.js'),
-    chngsiteip_jpeg_mrlink  => Cpanel::MagicRevision::calculate_magic_url('../themes/x/icons/change_site_ipaddress.gif'),
-    autocomplete_css_mrlink => Cpanel::MagicRevision::calculate_magic_url('../../yui/assets/skins/sam/autocomplete.css'),
-    pkghover_js_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../js/pkg_hover.js'),
-    datasource_js_mrlink    => Cpanel::MagicRevision::calculate_magic_url('../../yui/datasource/datasource.js'),
-    autocomplete_js_mrlink  => Cpanel::MagicRevision::calculate_magic_url('../../yui/autocomplete/autocomplete.js'),
+    favicon_mrlink          => Cpanel::MagicRevision::calculate_magic_url('../../../favicon.ico'),
+    ie7_css_mrlink          => Cpanel::MagicRevision::calculate_magic_url('../../../themes/x/css/ie7.css'),
+    ie6_css_mrlink          => Cpanel::MagicRevision::calculate_magic_url('../../../themes/x/css/ie6.css'),
+    combopt_css_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../../../combined_optimized.css'),
+    styleopt_css_mrlink     => Cpanel::MagicRevision::calculate_magic_url('../../../themes/x/style_optimized.css'),
+    utilcontainer_js_mrlink => Cpanel::MagicRevision::calculate_magic_url('../../../../yui-gen/utilities_container/utilities_container.js'),
+    cpallmin_js_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../../../../cjt/cpanel-all-min.js'),
+    chngsiteip_jpeg_mrlink  => Cpanel::MagicRevision::calculate_magic_url('../../../themes/x/icons/change_site_ipaddress.gif'),
+    autocomplete_css_mrlink => Cpanel::MagicRevision::calculate_magic_url('../../../../yui/assets/skins/sam/autocomplete.css'),
+    pkghover_js_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../../../js/pkg_hover.js'),
+    datasource_js_mrlink    => Cpanel::MagicRevision::calculate_magic_url('../../../../yui/datasource/datasource.js'),
+    autocomplete_js_mrlink  => Cpanel::MagicRevision::calculate_magic_url('../../../../yui/autocomplete/autocomplete.js'),
 };
 
 my $access_Hash = load_accesshash();
@@ -169,7 +169,7 @@ sub build_template {
 
     my $template = Template->new(
         {
-            INCLUDE_PATH => '/usr/local/cpanel/whostmgr/docroot/cgi/ipmanager/',
+            INCLUDE_PATH => '/usr/local/cpanel/whostmgr/docroot/cgi/addons/ipmanager/',
         }
     );
     $template->process( $template_name, $vars )

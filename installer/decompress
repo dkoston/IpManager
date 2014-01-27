@@ -52,7 +52,7 @@ echo "############################################################"
 echo ""
 echo ""
 
-sleep 5 
+sleep 2 
 
 
 modules=( "CGI" "Fcntl" "IO::Handle" "IPC::Open3" "JSON" "MIME::Base64" "Template")
@@ -91,9 +91,20 @@ cp -f ./uninstall-ipmanager /scripts/uninstall-ipmanager
 cd $CDIR 
 rm -rf $TMPDIR
 
+#Remove old Index
+if [ -f /usr/local/cpanel/whostmgr/docroot/cgi/addon_ipmanager.cgi ]; then
+	rm /usr/local/cpanel/whostmgr/docroot/cgi/addon_ipmanager.cgi
+fi
+if [ -d /usr/local/cpanel/whostmgr/docroot/cgi/ipmanager ]; then
+	rm -rf /usr/local/cpanel/whostmgr/docroot/cgi/ipmanager
+fi
+
 if [ ! -f /root/.accesshash ]; then
 	/usr/local/cpanel/whostmgr/bin/whostmgr setrhash >/dev/null
 fi
+
+
+
 
 if (( "$APPCONFIGVERSION" >= "1" )); then
 	echo ""
@@ -110,7 +121,7 @@ if (( "$APPCONFIGVERSION" >= "1" )); then
 		fi
 		echo "..."
 		#Manual use of appconfig
-		cp -f ./usr/local/cpanel/whostmgr/docroot/cgi/ipmanager/appconfig/ipmanager-acv1.conf /var/cpanel/apps/
+		cp -f ./usr/local/cpanel/whostmgr/docroot/cgi/addons/ipmanager/appconfig/ipmanager-acv1.conf /var/cpanel/apps/
 		
 	elif (( "$APPCONFIGVERSION" == "2" )); then
 		#Remove old v1 appconfig file
@@ -121,11 +132,16 @@ if (( "$APPCONFIGVERSION" >= "1" )); then
 		#Use appconfig system to register app if not already installed
 		APPCONFIG=$(/usr/local/cpanel/bin/show_appconfig)
 		if [[ $APPCONFIG =~ ipmanager\-acv2 ]]; then
-			echo "..."
-		else
-			echo "..."
-			/usr/local/cpanel/bin/register_appconfig /usr/local/cpanel/whostmgr/docroot/cgi/ipmanager/appconfig/ipmanager-acv2.conf
+			/usr/local/cpanel/bin/unregister_appconfig ipmanager-acv2
 		fi
+		
+		if [[ $APPCONFIG =~ ipmanager\-acv3 ]]; then
+			echo "...."
+		else
+			/usr/local/cpanel/bin/register_appconfig /usr/local/cpanel/whostmgr/docroot/cgi/addons/ipmanager/appconfig/ipmanager-acv3.conf
+		fi
+			
+		
 	fi
 	echo "...done"
 fi

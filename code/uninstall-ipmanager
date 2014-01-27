@@ -2,6 +2,7 @@
 
 rm -rf /usr/local/cpanel/whostmgr/docroot/cgi/ipmanager/
 rm -f /usr/local/cpanel/whostmgr/docroot/cgi/addon_ipmanager.cgi
+rm -f /usr/local/cpanel/whostmgr/docroot/cgi/addons/ipmanager/index.cgi
 rm -f /usr/local/cpanel/Cpanel/Ipmanager.pm
 rm -f /usr/local/cpanel/bin/ipmanageradmin
 rm -f /usr/local/cpanel/bin/ipmanagerwrap
@@ -10,17 +11,17 @@ rm -f /usr/local/cpanel/bin/ipmanagerwrap
 if [ -f /var/cpanel/apps/ipmanager-acv1.conf ]; then
 	rm -f /var/cpanel/apps/ipmanager-acv1.conf
 fi
-
-#Uninstall appconfig v2
+#Uninstall appconfig v2 and v2.1
 APPCONFIG=$(/usr/local/cpanel/bin/show_appconfig)
 if [[ $APPCONFIG =~ ipmanager\-acv2 ]]; then
 	/usr/local/cpanel/bin/unregister_appconfig ipmanager-acv2
 fi
+if [[ $APPCONFIG =~ ipmanager\-acv3 ]]; then
+	/usr/local/cpanel/bin/unregister_appconfig ipmanager-acv3
+fi
 
 #Uninstall AppConfig apps
 rm -rf /var/cpanel/ipmanager
-
-
 
 echo "IP Manager Plugin Uninstalled."
 

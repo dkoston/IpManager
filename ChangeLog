@@ -1,3 +1,7 @@
+1.6:
+	Fix:	Fix duplicate WHM links
+	Fix:	Ensure IP drop down is colored in all browsers
+	
 1.5:
 	Improvement: Fix AppConfig ACL for AppConfig v2
 	Improvement: Update install doc instructions

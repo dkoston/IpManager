@@ -3,7 +3,7 @@
 echo "What Version Number?";
 read VERSION;
 
-CURVER=$(grep 'Version:' ../code/cgi/addon_ipmanager.cgi);
+CURVER=$(grep 'Version:' ../code/cgi/addons/ipmanager/index.cgi);
 echo "Current version is: ";
 echo $CURVER;
 echo "";

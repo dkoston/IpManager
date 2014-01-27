@@ -32,7 +32,7 @@ CPANEL.security_token = "[% security_token %]";
 <body class="yui-skin-sam">
 <div id="pageheader">
         <div id="breadcrumbs">
-                <p>&nbsp;<a href="[% security_token %]/scripts/command?PFILE=main">Main</a>&nbsp;&gt;&gt;&nbsp;Plugins</a>&nbsp;&gt;&gt;&nbsp;<a href="[% security_token %]/cgi/addon_ipmanager.cgi" class="active">IP Manager</a></p>
+                <p>&nbsp;<a href="[% security_token %]/scripts/command?PFILE=main">Main</a>&nbsp;&gt;&gt;&nbsp;Plugins</a>&nbsp;&gt;&gt;&nbsp;<a href="[% security_token %]/cgi/addons/ipmanager/index.cgi" class="active">IP Manager</a></p>
         </div>
         <div id="doctitle">
                 <h1><span><img src="[% chngsiteip_jpeg_mrlink %]" alt="" /></span> Change Site's IP Address</h1>
@@ -49,7 +49,7 @@ CPANEL.security_token = "[% security_token %]";
 		<span class="b2" style='color:red;'>ERROR. Ip not changed. Error Message: [% statusmsg %]</span>
 	[% END %]
 	<br /><br />
-	<form action='[% security_token %]/cgi/addon_ipmanager.cgi'>
+	<form action='[% security_token %]/cgi/addons/ipmanager/index.cgi'>
 		<input type="submit" class="input-button" onclick='' value="Back to IP Manager">
 	</form>
 </div>

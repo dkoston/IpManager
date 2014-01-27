@@ -10,7 +10,9 @@
 <!--[if lt IE 7]>
 <link rel="stylesheet" href="[% ie6_css_mrlink %]" />
 <![endif]-->
-<link rel='stylesheet' type='text/css' href='[% combopt_css_mrlink %]' /><link rel='stylesheet' type='text/css' href='[% styleopt_css_mrlink %]' />
+<link rel='stylesheet' type='text/css' href='[% combopt_css_mrlink %]' />
+<link rel='stylesheet' type='text/css' href='[% styleopt_css_mrlink %]' />
+<link rel="stylesheet" type='text/css' href="/cgi/addons/ipmanager/css/chosen.min.css">
 <!--[if IE]>
 <style type="text/css">
 h3{font-size:11px;}
@@ -42,7 +44,7 @@ fieldset li{
 <body class="yui-skin-sam">
 <div id="pageheader">
         <div id="breadcrumbs">
-                <p>&nbsp;<a href="[% security_token %]/scripts/command?PFILE=main">Main</a>&nbsp;&gt;&gt;&nbsp;Plugins</a>&nbsp;&gt;&gt;&nbsp;<a href="[% security_token %]/cgi/addon_ipmanager.cgi" class="active">IP Manager</a></p>
+                <p>&nbsp;<a href="[% security_token %]/scripts/command?PFILE=main">Main</a>&nbsp;&gt;&gt;&nbsp;Plugins</a>&nbsp;&gt;&gt;&nbsp;<a href="[% security_token %]/cgi/addons/ipmanager/index.cgi" class="active">IP Manager</a></p>
         </div>
         <div id="doctitle">
                 <h1><span><img src="[% chngsiteip_jpeg_mrlink %]" alt="" /></span> Change Site's IP Address</h1>
@@ -69,7 +71,7 @@ fieldset li{
                     <td class="align_right"><label for="username">New IP Address:</label></td>
 
                     <td>
-						<select name="customip">
+						<select name="customip" id="customipselect" class="chosen-select">
 						<!--if nat'd display public ip but value is internal ip -->
 						[% FOREACH key IN available_ips.keys.sort %]
 							[% IF (matches = available_ips.$key.match('(.+)(-GREY)$')) %]
@@ -151,4 +153,8 @@ fieldset li{
 
 </div>
 </body>
+<script src="/cgi/addons/ipmanager/js/chosen.jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+	jQuery(".chosen-select").chosen();
+</script>
 </html>
