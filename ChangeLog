@@ -1,3 +1,7 @@
+1.7:
+	Fix:	cPanel jQuery doesn't allow event.returnValue to stop drop-down of IPs from closing. Using stopPropogation() instead.
+	Fix:	Fix issue where reseller IP colors didn't show up due to newline chars
+	
 1.6:
 	Fix:	Fix duplicate WHM links
 	Fix:	Ensure IP drop down is colored in all browsers

@@ -3,7 +3,7 @@
 # IP Manager - Dave Koston - Koston Consulting - All Rights Reserved
 #
 # This code is subject to the GNU GPL: http://www.gnu.org/licenses/gpl.html
-# Version: 1.6
+# Version: 1.7
 
 BEGIN { unshift @INC, '/usr/local/cpanel'; }
 use strict;
@@ -48,7 +48,7 @@ my $vars = {
     combopt_css_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../../../combined_optimized.css'),
     styleopt_css_mrlink     => Cpanel::MagicRevision::calculate_magic_url('../../../themes/x/style_optimized.css'),
     utilcontainer_js_mrlink => Cpanel::MagicRevision::calculate_magic_url('../../../../yui-gen/utilities_container/utilities_container.js'),
-    cpallmin_js_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../../../../cjt/cpanel-all-min.js'),
+    cpallmin_js_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../../../../cjt/cpanel-all-min-en.js'),
     chngsiteip_jpeg_mrlink  => Cpanel::MagicRevision::calculate_magic_url('../../../themes/x/icons/change_site_ipaddress.gif'),
     autocomplete_css_mrlink => Cpanel::MagicRevision::calculate_magic_url('../../../../yui/assets/skins/sam/autocomplete.css'),
     pkghover_js_mrlink      => Cpanel::MagicRevision::calculate_magic_url('../../../js/pkg_hover.js'),
@@ -106,20 +106,12 @@ elsif ( $action eq 'selectip' ) {
         my $domain_ip = $ip->{ip};
         my $domains   = $ip->{domains};
         my @domains   = @{$domains};
-        my $ip_match  = 0;
 
         #See if the IP is on the list of available IPs
         foreach my $key ( keys %{$available_ips} ) {
+			
             if ( $key eq $domain_ip ) {
-                $ip_match = 1;
-
-                #The IP is in our list of available IPs, test the domains on it to see if this user owns at least one
-                my $counter = 0;
-                foreach my $domain (@domains) {
-                    if ( $ENV{'REMOTE_USER'} eq get_reseller_by_domain($domain) ) {
-                        $counter++;
-                    }
-                }
+				my $counter = scalar(@domains) || 0;
                 if ( $counter == 1 ) {
                     $available_ips->{$key} .= '-GREY';
                 }
@@ -195,7 +187,9 @@ sub get_reseller_ip_list {
             flock( $fh, &Fcntl::LOCK_EX );
             {
                 while ( my $line = <$fh> ) {
-                    $ip_list{$line} = $line;
+					my $ip = $line;
+					$ip =~ s/\n//g;
+                    $ip_list{$ip} = $ip;
                 }
             }
             flock( $fh, &Fcntl::LOCK_UN );
@@ -437,8 +431,11 @@ sub get_domains_by_ip {
                 $domains[0] = $domain_string;
             }
 
+			my $ip = $line_contents[0];
+			$ip =~ s/\n//g;
+			
             my $ip_and_domain_list = {
-                ip      => $line_contents[0],
+                ip      => $ip,
                 domains => \@domains,
             };
 

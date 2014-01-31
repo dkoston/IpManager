@@ -77,7 +77,7 @@ fieldset li{
 							[% IF (matches = available_ips.$key.match('(.+)(-GREY)$')) %]
 								<option class='grey' value=[% key %]>[% matches.0 %]</option>
 							[% ELSIF (matches = available_ips.$key.match('(.+)(-RED)$')) %]
-								<option class='red' value=[% key %]>[% matches.0 %]</option>
+								<option style="background-color:red;" value=[% key %]>[% matches.0 %]</option>
 							[% ELSE %]
 								<option value=[% key %]>[% available_ips.$key %]</option>
 							[% END %]
@@ -153,8 +153,14 @@ fieldset li{
 
 </div>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
 <script src="/cgi/addons/ipmanager/js/chosen.jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-	jQuery(".chosen-select").chosen();
+	$().ready(function(){
+		$(".chosen-select").chosen({width: "200px"});
+		$(".chosen-select").click(function(e) {
+		  e.stopPropagation();
+		});
+	});
 </script>
 </html>
