@@ -109,9 +109,8 @@ elsif ( $action eq 'selectip' ) {
 
         #See if the IP is on the list of available IPs
         foreach my $key ( keys %{$available_ips} ) {
-			
             if ( $key eq $domain_ip ) {
-				my $counter = scalar(@domains) || 0;
+                               my $counter = scalar(@domains) || 0;
                 if ( $counter == 1 ) {
                     $available_ips->{$key} .= '-GREY';
                 }
@@ -146,7 +145,8 @@ elsif ( $action eq 'changeip' ) {
     }
 
     #Change IPs
-    my $changeip_obj = change_site_ip( $user, $domain, $customip, $vars->{subdomains}, $vars->{parked_domains} );
+    my $changeip_obj = change_site_ip( $user, $domain, $customip, $vars->{aliasip}, $vars->{subdomains}, $vars->{parked_domains} );
+    
     $vars->{status}    = $changeip_obj->{status};
     $vars->{statusmsg} = $changeip_obj->{statusmsg};
 
@@ -187,8 +187,8 @@ sub get_reseller_ip_list {
             flock( $fh, &Fcntl::LOCK_EX );
             {
                 while ( my $line = <$fh> ) {
-					my $ip = $line;
-					$ip =~ s/\n//g;
+                                       my $ip = $line;
+                                       $ip =~ s/\n//g;
                     $ip_list{$ip} = $ip;
                 }
             }
@@ -332,8 +332,7 @@ sub get_parked_domains {
 ####Need to do this for all addon, parked and subdomains as well
 sub change_site_ip {
     my $return_vars = { status => 0, statusmsg => undef };
-    my ( $user, $domain, $newip, $subdomains_ref, $parked_domains_ref ) = @_;
-
+    my ( $user, $domain, $newip, $aliasip_ref, $subdomains_ref, $parked_domains_ref ) = @_;
     my $cpuser_guard = Cpanel::Config::CpUserGuard->new($user);
 
     unless ($cpuser_guard) {
@@ -345,7 +344,8 @@ sub change_site_ip {
     $cpuser_guard->save();
 
     #Change main IP
-    change_ip_in_files( $user, $domain, $oldip, $newip );
+    change_ip_in_files( $user, $domain, $oldip, $newip, $aliasip_ref );
+
 
     #Change parked domain IPs
     foreach my $parked_domain ( @{$parked_domains_ref} ) {
@@ -363,22 +363,27 @@ sub change_site_ip {
     #Rebuild httpd.conf
     run_forked('/scripts/rebuildhttpdconf --force');
 
-    #restart apache
+    #Restart Apache
     run_forked('/usr/local/apache/bin/apachectl restart');
-
+      
     $return_vars->{status} = 1;
 
     return $return_vars;
 }
 
-sub change_ip_in_files {
-    my ( $user, $domain, $old_ip, $new_ip ) = @_;
+sub change_ip_in_files {    
+     my ( $user, $domain, $old_ip, $new_ip, $aliasip ) = @_;
 
     #Replace IP in /var/cpanel/userdata/$user/$domain
     my $cp_userdata = Cpanel::Config::userdata::update_domain_ip_data( $user, $domain, $new_ip );
 
     #Replace IP in DNS Zone
-    run_forked("sed -i 's/$old_ip/$new_ip/g' /var/named/$domain.db && /scripts/dnscluster synczone $domain");
+        if ( is_nat() ) {
+        run_forked("sed -i 's/$old_ip/$aliasip/g' /var/named/$domain.db && /scripts/dnscluster synczone $domain");
+            }
+        else {
+             run_forked("sed -i 's/$old_ip/$new_ip/g' /var/named/$domain.db && /scripts/dnscluster synczone $domain");
+             }    
 }
 
 sub get_ip_aliases {
@@ -431,9 +436,9 @@ sub get_domains_by_ip {
                 $domains[0] = $domain_string;
             }
 
-			my $ip = $line_contents[0];
-			$ip =~ s/\n//g;
-			
+                       my $ip = $line_contents[0];
+                       $ip =~ s/\n//g;
+
             my $ip_and_domain_list = {
                 ip      => $ip,
                 domains => \@domains,
