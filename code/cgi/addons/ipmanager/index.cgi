@@ -3,7 +3,7 @@
 # IP Manager - Dave Koston - Koston Consulting - All Rights Reserved
 #
 # This code is subject to the GNU GPL: http://www.gnu.org/licenses/gpl.html
-# Version: 1.7
+# Version: 1.8
 
 BEGIN { unshift @INC, '/usr/local/cpanel'; }
 use strict;
@@ -56,7 +56,6 @@ my $vars = {
     autocomplete_js_mrlink  => Cpanel::MagicRevision::calculate_magic_url('../../../../yui/autocomplete/autocomplete.js'),
 };
 
-my $access_Hash = load_accesshash();
 my $cgi         = CGI->new();
 print $cgi->header();
 my $action   = _sanitize( $cgi->param('action') );
@@ -146,7 +145,7 @@ elsif ( $action eq 'changeip' ) {
 
     #Change IPs
     my $changeip_obj = change_site_ip( $user, $domain, $customip, $vars->{aliasip}, $vars->{subdomains}, $vars->{parked_domains} );
-    
+
     $vars->{status}    = $changeip_obj->{status};
     $vars->{statusmsg} = $changeip_obj->{statusmsg};
 
@@ -233,10 +232,9 @@ sub gather_list_of_accounts {
     my $api_params = {};
 
     my $pub_api = Cpanel::PublicAPI->new(
-        {
-            user       => $ENV{'REMOTE_USER'},
-            accesshash => $access_Hash
-        }
+      'user'            => $ENV{'REMOTE_USER'},
+      'accesshash'      => load_accesshash(),
+      'ssl_verify_mode' => 'SSL_VERIFY_NONE'
     );
 
     unless ( $ENV{'REMOTE_USER'} eq 'root' ) {
@@ -247,9 +245,9 @@ sub gather_list_of_accounts {
     my $pub_api_response = $pub_api->whm_api( 'listaccts', $api_params, 'json' );
     my $json_obj         = JSON->new();
     my $json             = $json_obj->allow_nonref->utf8->relaxed->decode($pub_api_response);
-    my $accts_ref        = $json->{acct};
+    my $accts_ref        = $json->{data}->{acct};
 
-    if ( $json->{status} eq '1' ) {
+    if ( $json->{metadata}->{result} eq '1' ) {
         #sort accounts alphabetically
         my @sorted_accounts = sort { $a->{domain} cmp $b->{domain} } @{$accts_ref};
 
@@ -257,7 +255,7 @@ sub gather_list_of_accounts {
         $return_vars->{accounts} = \@sorted_accounts;
     }
     else {
-        $logger->warn( 'API Error 1 - gather_list_of_accounts() - ' . $json->{cpanelresult}->{error} );
+        $logger->error( 'API Error 1 - gather_list_of_accounts() - ' . $json->{cpanelresult}->{error} );
     }
 
     return $return_vars;
@@ -268,10 +266,9 @@ sub get_subdomains {
     my $return_vars = { status => 0, subdomains => undef };
 
     my $pub_api = Cpanel::PublicAPI->new(
-        {
-            user       => $ENV{'REMOTE_USER'},
-            accesshash => $access_Hash
-        }
+      'user'            => $ENV{'REMOTE_USER'},
+      'accesshash'      => load_accesshash(),
+      'ssl_verify_mode' => 'SSL_VERIFY_NONE'
     );
 
     my $api_params = {
@@ -290,7 +287,7 @@ sub get_subdomains {
         $return_vars->{subdomains} = $json->{cpanelresult}->{data};
     }
     else {
-        $logger->warn( 'API Error 1 - get_subdomains() - ' . $json->{cpanelresult}->{error} );
+        $logger->error( 'API Error 1 - get_subdomains() - ' . $json->{cpanelresult}->{error} );
     }
 
     return $return_vars;
@@ -301,10 +298,9 @@ sub get_parked_domains {
     my $return_vars = { status => 0, parked_domains => undef };
 
     my $pub_api = Cpanel::PublicAPI->new(
-        {
-            user       => $ENV{'REMOTE_USER'},
-            accesshash => $access_Hash
-        }
+      'user'            => $ENV{'REMOTE_USER'},
+      'accesshash'      => load_accesshash(),
+      'ssl_verify_mode' => 'SSL_VERIFY_NONE'
     );
 
     my $api_params = {
@@ -323,7 +319,7 @@ sub get_parked_domains {
         $return_vars->{parked_domains} = $json->{cpanelresult}->{data};
     }
     else {
-        $logger->warn( 'API Error 1 - get_parked_domains() - ' . $json->{cpanelresult}->{error} );
+        $logger->error( 'API Error 1 - get_parked_domains() - ' . $json->{cpanelresult}->{error} );
     }
 
     return $return_vars;
@@ -365,25 +361,25 @@ sub change_site_ip {
 
     #Restart Apache
     run_forked('/usr/local/apache/bin/apachectl restart');
-      
+
     $return_vars->{status} = 1;
 
     return $return_vars;
 }
 
-sub change_ip_in_files {    
+sub change_ip_in_files {
      my ( $user, $domain, $old_ip, $new_ip, $aliasip ) = @_;
 
     #Replace IP in /var/cpanel/userdata/$user/$domain
     my $cp_userdata = Cpanel::Config::userdata::update_domain_ip_data( $user, $domain, $new_ip );
 
     #Replace IP in DNS Zone
-        if ( is_nat() ) {
-        run_forked("sed -i 's/$old_ip/$aliasip/g' /var/named/$domain.db && /scripts/dnscluster synczone $domain");
-            }
-        else {
-             run_forked("sed -i 's/$old_ip/$new_ip/g' /var/named/$domain.db && /scripts/dnscluster synczone $domain");
-             }    
+    if ( is_nat() ) {
+      run_forked("sed -i 's/$old_ip/$aliasip/g' /var/named/$domain.db && /scripts/dnscluster synczone $domain");
+    }
+    else {
+      run_forked("sed -i 's/$old_ip/$new_ip/g' /var/named/$domain.db && /scripts/dnscluster synczone $domain");
+    }
 }
 
 sub get_ip_aliases {

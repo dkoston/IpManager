@@ -11,7 +11,7 @@ Installation
 ------------
 1. SSH to your cPanel/WHM server and gain root access
 2. Run the following command:
-        wget -N https://github.com/kostonconsulting/IpManager/raw/master/installer/IP-Manager-1.7.sea;chmod +x IP-Manager-1.7.sea;./IP-Manager-1.7.sea 
+        wget -N https://github.com/kostonconsulting/IpManager/raw/master/installer/IP-Manager-1.8.sea;chmod +x IP-Manager-1.8.sea;./IP-Manager-1.8.sea
 
 3. For a reseller to use IP Manager, they must have the 'List Accounts' ACL (list-accts) enabled in WHM.
 
@@ -19,12 +19,20 @@ Installation
 
 Business Uses
 -------------
-DDoS risk mitigation: 
-    If all your sites are on the same shared IP, they will all get DDoS'd when someone attacks that IP. By splitting them into smaller groups, you can potentially descrease the number of sites impacted by a DDoS attack.
+DDoS risk mitigation:
+    If all your sites are on the same shared IP, they will all get DDoS'd when someone attacks that IP. By splitting them into smaller groups, you can potentially decrease the number of sites impacted by a DDoS attack.
 
 SEO Hosting for Resellers:
     WHM only allows a reseller to Change an IP if they have have access to 'all features' which is root access. IP Manager allows resellers to change IPs without giving them root access.
-    
+
 Warranty
 -------------
-IP Manager is provided with NO WARRANTY of any kind. Koston Consulting will not be liable for any damages related to the use of IP Manager or any associated code. Use IP Manager at your own risk. 
+IP Manager is provided with NO WARRANTY of any kind. Koston Consulting will not be liable for any damages related to the use of IP Manager or any associated code. Use IP Manager at your own risk.
+
+Errors
+-------------
+Errors are logged to /usr/local/cpanel/logs/error_log
+
+Run the following via shell when using the plugin to see any errors:
+
+```tail -f /usr/local/cpanel/logs/error_log```
