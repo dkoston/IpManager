@@ -1,15 +1,20 @@
+1.8:
+	Fix: WHM's listaccts api call appears to have changed. Updated code to parse the response
+	Fix: Allow for self-signed certs for WHM via https://127.0.0.1:2087
+	Improvement: Add information in README about how to get errors
+
 1.7:
 	Fix:	cPanel jQuery doesn't allow event.returnValue to stop drop-down of IPs from closing. Using stopPropogation() instead.
 	Fix:	Fix issue where reseller IP colors didn't show up due to newline chars
-	
+
 1.6:
 	Fix:	Fix duplicate WHM links
 	Fix:	Ensure IP drop down is colored in all browsers
-	
+
 1.5:
 	Improvement: Fix AppConfig ACL for AppConfig v2
 	Improvement: Update install doc instructions
-	
+
 1.4:
 	Improvement: Use CpUserGuard rather than SaveCpUserFile
 	Improvement: Update error reporting to use Cpanel::Logger
@@ -18,18 +23,18 @@
 	Improvement: Create sub for forked processes run_forked()
 	Improvement: Ensure explicit close() for filehandles
 	Improvement: lock open files with flock() and open with sysopen()
-	Improvement: only load accesshash once per execution 
+	Improvement: only load accesshash once per execution
 	Improvement: sort domain list by alpha for choosesite.tt
 	Improvement: Display public IP when using 1:1 NAT
 	Fix: Support AppConfig
-	
+
 1.3:
 	Improvement: Sync DNS zone to cluster after edit
-	
+
 1.2:
 	Fix: Fix display issues in WHM
 	Fix: Ensure that IP change is not dedicated
-	
+
 1.1:
 	Improvement: Allow for perl 5.10 x86_64</li>
 
@@ -38,14 +43,14 @@
 
 0.9:
 	Improvement: Update to not require vars.pm for Perl
-	
+
 0.8:
 	Fix: Update WHM JavaScript to work with 11.32.2 (fixes non-display of account information)
-	
+
 0.7:
 	Improvement: Restarts BIND immediately after IP change
 	Fix: Bug fix for UI where HASH shows in place of domain name<
-	
+
 0.6:
 	Fix: Allows you to change IPs without making the IP dedicated
 	Improvement: UI Updates
