@@ -3,7 +3,7 @@
 # IP Manager - Dave Koston - Koston Consulting - All Rights Reserved
 #
 # This code is subject to the GNU GPL: http://www.gnu.org/licenses/gpl.html
-# Version: 1.9
+# Version: 2.0
 
 BEGIN { unshift @INC, '/usr/local/cpanel'; }
 use strict;
@@ -491,12 +491,13 @@ sub run_forked {
 
     #No return is provided from this sub
     my ($command) = @_;
-
+    my @result;
     my $wh = IO::Handle->new();
     my $rh = IO::Handle->new();
     my $eh = IO::Handle->new();
 
     my $pid = IPC::Open3::open3( $wh, $rh, $eh, $command );
+    @result = <$rh>; # We need to read from the read handle here for whostmgrd to actual generate the access hash for a reseller
     waitpid( 0, $pid );
 }
 
