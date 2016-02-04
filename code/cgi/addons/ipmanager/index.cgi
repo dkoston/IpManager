@@ -3,7 +3,7 @@
 # IP Manager - Dave Koston - Koston Consulting - All Rights Reserved
 #
 # This code is subject to the GNU GPL: http://www.gnu.org/licenses/gpl.html
-# Version: 1.8
+# Version: 1.9
 
 BEGIN { unshift @INC, '/usr/local/cpanel'; }
 use strict;
@@ -255,7 +255,7 @@ sub gather_list_of_accounts {
         $return_vars->{accounts} = \@sorted_accounts;
     }
     else {
-        $logger->error( 'API Error 1 - gather_list_of_accounts() - ' . $json->{cpanelresult}->{error} );
+        $logger->warn( 'API Error 1 - gather_list_of_accounts() - ' . $json->{cpanelresult}->{error} );
     }
 
     return $return_vars;
@@ -287,7 +287,7 @@ sub get_subdomains {
         $return_vars->{subdomains} = $json->{cpanelresult}->{data};
     }
     else {
-        $logger->error( 'API Error 1 - get_subdomains() - ' . $json->{cpanelresult}->{error} );
+        $logger->warn( 'API Error 1 - get_subdomains() - ' . $json->{cpanelresult}->{error} );
     }
 
     return $return_vars;
@@ -319,7 +319,7 @@ sub get_parked_domains {
         $return_vars->{parked_domains} = $json->{cpanelresult}->{data};
     }
     else {
-        $logger->error( 'API Error 1 - get_parked_domains() - ' . $json->{cpanelresult}->{error} );
+        $logger->warn( 'API Error 1 - get_parked_domains() - ' . $json->{cpanelresult}->{error} );
     }
 
     return $return_vars;
@@ -446,6 +446,11 @@ sub get_domains_by_ip {
     return @ips_and_their_domains;
 }
 
+sub get_home_dir {
+  my ($name, $passwd, $uid, $gid, $quota, $comment, $gcos, $home_dir) = getpwnam($ENV{'REMOTE_USER'});
+  return $home_dir;
+}
+
 sub load_accesshash {
 
     #Ensure access hash exists
@@ -455,7 +460,7 @@ sub load_accesshash {
         $hash_file = "/root/.accesshash";
     }
     else {
-        $hash_file = $ENV{'HOME'} . "/.accesshash";
+        $hash_file = get_home_dir() . "/.accesshash";
     }
     unless ( -f $hash_file ) {
         run_forked('/usr/local/cpanel/whostmgr/bin/whostmgr setrhash');

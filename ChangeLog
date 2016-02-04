@@ -1,3 +1,7 @@
+1.9:
+	Fix: $ENV{'HOME'} behavior changed in WHM, use getpwnam() output instead
+	Fix: Use Cpanel::Logger->warn() as Cpanel::Logger->error() DNE
+	
 1.8:
 	Fix: WHM's listaccts api call appears to have changed. Updated code to parse the response
 	Fix: Allow for self-signed certs for WHM via https://127.0.0.1:2087
