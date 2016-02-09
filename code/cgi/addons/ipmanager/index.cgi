@@ -3,7 +3,7 @@
 # IP Manager - Dave Koston - Koston Consulting - All Rights Reserved
 #
 # This code is subject to the GNU GPL: http://www.gnu.org/licenses/gpl.html
-# Version: 2.0
+# Version: 2.1
 
 BEGIN { unshift @INC, '/usr/local/cpanel'; }
 use strict;
