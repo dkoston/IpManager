@@ -150,6 +150,7 @@ elsif ( $action eq 'changeip' ) {
     $vars->{statusmsg} = $changeip_obj->{statusmsg};
 
     #Reload DNS Zones
+    run_forked('/scripts/fixrndc');
     run_forked('/scripts/restartsrv_bind');
 
     build_template( 'ipchanged.tt', $vars );
