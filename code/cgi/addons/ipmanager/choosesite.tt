@@ -47,6 +47,8 @@ CPANEL.security_token = "[% security_token %]";
 .searchmod {text-align:center;}
 </style>
 
+[% IF accts.size > 0 %]
+
 <form action="" name="fmain" onsubmit="setHostname(); var account_selected = (this.domain.selectedIndex !== -1) && (this.user.selectedIndex !== -1); if (!account_selected) { alert('You must select an account to proceed.'); return false }">
 	<input type='hidden' name='action' value='selectip' />
 	<input type='hidden' name='hostname' />
@@ -108,14 +110,14 @@ CPANEL.security_token = "[% security_token %]";
 
       </tr>
       <tr>
-      <td align="left" class="cell"> 
+      <td align="left" class="cell">
       <!-- AutoComplete begins -->
             <table align="center" width="100%" style="margin: 0 auto;">
                 <tr>
                 <td align="right" valign="top" width="10%">
                     By Domain:
                 </td>
-                <td align="left" valign="top" width="40%">    
+                <td align="left" valign="top" width="40%">
                         <div id="searchautocomplete2">
 
                             <input id="searchinput2">
@@ -123,15 +125,15 @@ CPANEL.security_token = "[% security_token %]";
                         </div>
                 </td>
                 <td align="right" valign="top" width="10%">
-                    By User: 
+                    By User:
                 </td>
-                <td align="left" valign="top" width="40%">    
+                <td align="left" valign="top" width="40%">
                         <div id="searchautocomplete">
                             <input id="searchinput">
 
                             <div id="searchcontainer"></div>
                        </div>
-                </td> 
+                </td>
                     </tr>
                     </table>
 <script type="text/javascript">
@@ -139,7 +141,7 @@ CPANEL.util.prevent_submit('searchinput');
 CPANEL.util.prevent_submit('searchinput2');
 </script>
             <!-- AutoComplete ends -->
-           <br /> 
+           <br />
            </td>
                </tr>
 
@@ -163,6 +165,11 @@ CPANEL.util.prevent_submit('searchinput2');
 
     </form>
 
+[% ELSE %]
+  <p> Unable to find any accounts to modify. Please ensure that the server owner has granted you 'List Accounts' permissions.</p>
+[% END %]
+
+
 <script type='text/javascript' src='[% pkghover_js_mrlink %]'></script><script type='text/javascript' src='[% datasource_js_mrlink %]'></script><script type='text/javascript' src='[% autocomplete_js_mrlink %]'></script>
 <script type="text/javascript">
 //<![CDATA[
@@ -171,7 +178,7 @@ function setHostname(){
 }
 
 
-var prefetchacctinfo = 0;        
+var prefetchacctinfo = 0;
 function selectd() {
     var thisuser = (document.fmain.user.options[document.fmain.user.selectedIndex].value || document.fmain.user.options[document.fmain.user.selectedIndex].text);
     for(var i=0;i<document.fmain.user.options.length;i++) {
@@ -208,7 +215,7 @@ function updateUserInfo(o) {
         var acctinfo = document.getElementById('acctinfo');
 		var owner = acct.getElementsByTagName('owner')[0].firstChild.nodeValue;
         var email = '';
-		if( acct.getElementsByTagName('email')[0].firstChild != null){ 			
+		if( acct.getElementsByTagName('email')[0].firstChild != null){
 			email = acct.getElementsByTagName('email')[0].firstChild.nodeValue;
 		}
         var startdate = acct.getElementsByTagName('startdate')[0].firstChild.nodeValue || '';
@@ -217,7 +224,7 @@ function updateUserInfo(o) {
         var ppkg = acct.getElementsByTagName('plan')[0].firstChild.nodeValue || '';
         var diskused = acct.getElementsByTagName('diskused')[0].firstChild.nodeValue || '';
         var disklimit = acct.getElementsByTagName('disklimit')[0].firstChild.nodeValue || '';
-    
+
         var newhtml ="<table style='margin: 0 auto;' class='htable' cellpadding='0' cellspacing='1'>" +
             "<tbody>"+
             "<tr><th>Ip</th><td>" + ip + "</td></tr>" +
@@ -280,17 +287,17 @@ function initOC () {
                     break;
                 }
             }
-        }            
+        }
     );
 
-    UserListAutoComp.resultTypeList = false;     
+    UserListAutoComp.resultTypeList = false;
     UserListAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
         return oResultData.user + " (" + oResultData.domain + ")";
     };
 
     var domainDS = new YAHOO.widget.DS_JSArray(domainsArray);
     domainDS.responseSchema = {fields:['domain','user']};
-    
+
     DomainListAutoComp = new YAHOO.widget.AutoComplete('searchinput2','searchcontainer2', domainDS);
     DomainListAutoComp.queryDelay = 0;
     DomainListAutoComp.typeAhead = false;
@@ -308,10 +315,10 @@ function initOC () {
                     break;
                 }
             }
-        }            
+        }
     );
 
-    DomainListAutoComp.resultTypeList = false;     
+    DomainListAutoComp.resultTypeList = false;
     DomainListAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
         return oResultData.domain + " (" + oResultData.user + ")";
     };

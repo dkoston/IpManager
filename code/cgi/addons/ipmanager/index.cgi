@@ -58,14 +58,14 @@ my $vars = {
 
 my $cgi         = CGI->new();
 print $cgi->header();
-my $action   = _sanitize( $cgi->param('action') );
-my $domain   = _sanitize( $cgi->param('hostname') );
-my $user     = _sanitize( $cgi->param('user') );
-my $oldip    = _sanitize( $cgi->param('oldip') );
-my $customip = _sanitize( $cgi->param('customip') );
-my $logger   = Cpanel::Logger->new();
-
-my $ip_aliases = is_nat() ? get_ip_aliases() : {};
+my $action      = _sanitize( $cgi->param('action') );
+my $domain      = _sanitize( $cgi->param('hostname') );
+my $user        = _sanitize( $cgi->param('user') );
+my $oldip       = _sanitize( $cgi->param('oldip') );
+my $customip    = _sanitize( $cgi->param('customip') );
+my $logger      = Cpanel::Logger->new();
+my $debug       = debug_file_present() ? 1 : 0;
+my $ip_aliases  = is_nat() ? get_ip_aliases() : {};
 
 if ( $action eq '' || $action eq 'acctlist' ) {
     my $accounts_obj = gather_list_of_accounts();
@@ -247,9 +247,18 @@ sub gather_list_of_accounts {
     my $json             = $json_obj->allow_nonref->utf8->relaxed->decode($pub_api_response);
     my $accts_ref        = $json->{data}->{acct};
 
+    if( $debug ){
+      $logger->info("API Response - WHM::listaccts: \n" .$json_obj->pretty->encode($json));
+    }
+
     if ( $json->{metadata}->{result} eq '1' ) {
-        #sort accounts alphabetically
-        my @sorted_accounts = sort { $a->{domain} cmp $b->{domain} } @{$accts_ref};
+
+        my @sorted_accounts = ();
+
+        if (ref($accts_ref) eq "ARRAY") {
+          #sort accounts alphabetically
+          @sorted_accounts = sort { $a->{domain} cmp $b->{domain} } @{$accts_ref};
+        }
 
         $return_vars->{status}   = 1;
         $return_vars->{accounts} = \@sorted_accounts;
@@ -282,6 +291,10 @@ sub get_subdomains {
     my $json_obj         = JSON->new();
     my $json             = $json_obj->allow_nonref->utf8->relaxed->decode($pub_api_response);
 
+    if( $debug ){
+      $logger->info("API Response - Cpanel::Subdomain::listsubdomains: \n" .$json_obj->pretty->encode($json));
+    }
+
     if ( $json->{cpanelresult}->{event}->{result} == '1' ) {
         $return_vars->{status}     = 1;
         $return_vars->{subdomains} = $json->{cpanelresult}->{data};
@@ -313,6 +326,10 @@ sub get_parked_domains {
     my $pub_api_response = $pub_api->whm_api( 'cpanel', $api_params, 'json' );
     my $json_obj         = JSON->new();
     my $json             = $json_obj->allow_nonref->utf8->relaxed->decode($pub_api_response);
+
+    if( $debug ){
+      $logger->info("API Response - Cpanel::Park::listparkeddomains: \n" .$json_obj->pretty->encode($json));
+    }
 
     if ( $json->{cpanelresult}->{event}->{result} == '1' ) {
         $return_vars->{status}         = 1;
@@ -499,6 +516,10 @@ sub run_forked {
     my $pid = IPC::Open3::open3( $wh, $rh, $eh, $command );
     @result = <$rh>; # We need to read from the read handle here for whostmgrd to actual generate the access hash for a reseller
     waitpid( 0, $pid );
+}
+
+sub debug_file_present {
+  return (-f '/usr/local/cpanel/whostmgr/docroot/cgi/addons/ipmanager/debug');
 }
 
 sub _sanitize {
