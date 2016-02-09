@@ -36,3 +36,17 @@ Errors are logged to /usr/local/cpanel/logs/error_log
 Run the following via shell when using the plugin to see any errors:
 
 ```tail -f /usr/local/cpanel/logs/error_log```
+
+Debugging
+---------
+An additional debug mode can be entered by running the following command:
+
+```touch /usr/local/cpanel/whostmgr/docroot/cgi/addons/ipmanager/debug```
+
+Now, you'll see api call output when running:
+
+```tail -f /usr/local/cpanel/logs/error_log```
+
+Make sure to run the following to turn off debug mode as it will print out information about accounts and their sub/parked/addon domains:
+
+```rm /usr/local/cpanel/whostmgr/docroot/cgi/addons/ipmanager/debug```
