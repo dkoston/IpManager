@@ -1,3 +1,8 @@
+2.1:
+	Improvement: Look for a blank accounts list and provide an error back to the user
+	Improvement: Add a debug mode which will log cPanel/WHM API responses
+	Improvement: Add call to /scripts/fixrndc to make sure /etc/rndc.key has the proper permissions before restarting the DNS server
+	
 2.0:
 	Fix: Reading from the read handle will make whostmgrd generate an access hash for a reseller in newer versions
 
