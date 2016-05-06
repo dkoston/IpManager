@@ -3,7 +3,7 @@
 # IP Manager - Dave Koston - Koston Consulting - All Rights Reserved
 #
 # This code is subject to the GNU GPL: http://www.gnu.org/licenses/gpl.html
-# Version: 2.1
+# Version: 2.2
 
 BEGIN { unshift @INC, '/usr/local/cpanel'; }
 use strict;
@@ -22,6 +22,7 @@ use Cpanel::MagicRevision          ();
 use Cpanel::PublicAPI              ();
 use Fcntl                          ();
 use IO::Handle                     ();
+use IO::Socket::SSL               qw( SSL_VERIFY_NONE );
 use IPC::Open3                     ();
 use JSON                           ();
 use MIME::Base64                   ();
@@ -58,11 +59,11 @@ my $vars = {
 
 my $cgi         = CGI->new();
 print $cgi->header();
-my $action      = _sanitize( $cgi->param('action') );
-my $domain      = _sanitize( $cgi->param('hostname') );
-my $user        = _sanitize( $cgi->param('user') );
-my $oldip       = _sanitize( $cgi->param('oldip') );
-my $customip    = _sanitize( $cgi->param('customip') );
+my $action      = _sanitize( scalar $cgi->param('action') );
+my $domain      = _sanitize( scalar $cgi->param('hostname') );
+my $user        = _sanitize( scalar $cgi->param('user') );
+my $oldip       = _sanitize( scalar $cgi->param('oldip') );
+my $customip    = _sanitize( scalar $cgi->param('customip') );
 my $logger      = Cpanel::Logger->new();
 my $debug       = debug_file_present() ? 1 : 0;
 my $ip_aliases  = is_nat() ? get_ip_aliases() : {};
@@ -235,7 +236,7 @@ sub gather_list_of_accounts {
     my $pub_api = Cpanel::PublicAPI->new(
       'user'            => $ENV{'REMOTE_USER'},
       'accesshash'      => load_accesshash(),
-      'ssl_verify_mode' => 'SSL_VERIFY_NONE'
+      'ssl_verify_mode' => SSL_VERIFY_NONE
     );
 
     unless ( $ENV{'REMOTE_USER'} eq 'root' ) {
@@ -278,7 +279,7 @@ sub get_subdomains {
     my $pub_api = Cpanel::PublicAPI->new(
       'user'            => $ENV{'REMOTE_USER'},
       'accesshash'      => load_accesshash(),
-      'ssl_verify_mode' => 'SSL_VERIFY_NONE'
+      'ssl_verify_mode' => SSL_VERIFY_NONE
     );
 
     my $api_params = {
@@ -314,7 +315,7 @@ sub get_parked_domains {
     my $pub_api = Cpanel::PublicAPI->new(
       'user'            => $ENV{'REMOTE_USER'},
       'accesshash'      => load_accesshash(),
-      'ssl_verify_mode' => 'SSL_VERIFY_NONE'
+      'ssl_verify_mode' => SSL_VERIFY_NONE
     );
 
     my $api_params = {
